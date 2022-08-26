@@ -22,6 +22,8 @@ class BCMDataset(Dataset):
                     # Print the filename
                     print(f'{subdir}/{file}')
                     print("debug")
+                    
+                    
                 
 
 
@@ -30,6 +32,7 @@ class BCMDataset(Dataset):
 
     def __getitem__(self, idx):
         return 1
+    
     
 
 
