@@ -10,7 +10,25 @@ from sklearn.preprocessing import OneHotEncoder
 class BCMDataset(Dataset):
     """BCM dataset"""
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, window_size = 3, stride = 1, MFCC_stride = 0.005):
+        """
+        Args:
+        ----------
+            file_path : str
+                Path to the h5 file.
+            window_size : int, optional
+                The size of the window in seconds. The default is 3.
+            stride : int, optional
+                The stride of the window in seconds. The default is 1.
+            MFCC_stride : float, optional
+                The stride of the MFCC in seconds. The default is 0.01.
+        """
+        self.window_size = window_size
+        self.stride = stride
+        self.MFCC_stride = MFCC_stride
+        self.mfccs_pr_window = int(window_size/MFCC_stride)
+        self.mfccs_pr_stride = int(stride/MFCC_stride)
+
         #Empty list to store the data
         self.data = np.load(file_path)
 
@@ -30,12 +48,13 @@ class BCMDataset(Dataset):
 
 
     def __len__(self):
-        return len(self.data)
+        return int((len(self.data) - self.mfccs_pr_window) / self.mfccs_pr_stride)
 
 
     def __getitem__(self, idx):
-        
-        return self.data[idx], self.y[idx]
+
+        position = idx * self.mfccs_pr_stride
+        return self.data[position : position + self.mfccs_pr_window], self.y[position : position + self.mfccs_pr_window]
     
     
 
@@ -43,4 +62,7 @@ class BCMDataset(Dataset):
 #Testing 
 if True:
     dataset = BCMDataset('data/mfcc_array2.npy')
+    print(len(dataset))
+    print(dataset[0])
+
     pass
