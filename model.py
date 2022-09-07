@@ -22,11 +22,11 @@ class LSTM_Model(LightningModule):
         self.output = nn.Sigmoid()
         
         self.lr = 0.000001
-        self.batch_size = 512
+        self.batch_size = 1
         
     def forward(self, x):
-        x = self.lstm(x)
-        x = self.fc(x)
+        lstm_out, (ht, ct) = self.lstm(x)
+        x = self.fc(torch.flatten(ht))
         return self.output(x)
     
     def configure_optimizers(self):

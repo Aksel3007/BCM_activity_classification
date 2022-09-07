@@ -54,13 +54,18 @@ class BCMDataset(Dataset):
     def __getitem__(self, idx):
 
         position = idx * self.mfccs_pr_stride
-        return self.data[position : position + self.mfccs_pr_window], self.y[position : position + self.mfccs_pr_window]
+        x = self.data[position : position + self.mfccs_pr_window]
+        y = self.y[position : position + self.mfccs_pr_window]
+        pass
+        return torch.from_numpy(x).float().cpu(), torch.from_numpy(y).float().cpu()
     
     
 
+# Print dataset version
+print("Dataset version:", 0.8)
 
 #Testing 
-if True:
+if False:
     dataset = BCMDataset('data/mfcc_array2.npy')
     print(len(dataset))
     print(dataset[0])
