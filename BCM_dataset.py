@@ -10,7 +10,7 @@ from sklearn.preprocessing import OneHotEncoder
 class BCMDataset(Dataset):
     """BCM dataset"""
 
-    def __init__(self, file_path, window_size = 3, stride = 1, MFCC_stride = 0.005):
+    def __init__(self, file_path, window_size = 3, stride = 1, MFCC_stride = 0.005, transform=None):
         """
         Args:
         ----------
@@ -23,11 +23,12 @@ class BCMDataset(Dataset):
             MFCC_stride : float, optional
                 The stride of the MFCC in seconds. The default is 0.01.
         """
+        self.transform = transform
+        self.file_path = file_path
         self.window_size = window_size
         self.stride = stride
         self.MFCC_stride = MFCC_stride
-        self.mfccs_pr_window = int(window_size/MFCC_stride)
-        self.mfccs_pr_stride = int(stride/MFCC_stride)
+        
 
         #Empty list to store the data
         self.data = np.load(file_path)
@@ -48,24 +49,19 @@ class BCMDataset(Dataset):
 
 
     def __len__(self):
-        return int((len(self.data) - self.mfccs_pr_window) / self.mfccs_pr_stride)
+        return int(len(self.data))
 
 
     def __getitem__(self, idx):
-
-        position = idx * self.mfccs_pr_stride
-        x = self.data[position : position + self.mfccs_pr_window]
-        y = self.y[position : position + self.mfccs_pr_window]
-        pass
-        return torch.from_numpy(x).float().cpu(), torch.from_numpy(y).float().cpu()
+        return torch.from_numpy(self.data[idx]).float().cpu(), torch.from_numpy(self.y[idx]).float().cpu()
     
     
 
 # Print dataset version
-print("Dataset version:", 0.8)
+print("Dataset version:", 0.12)
 
 #Testing 
-if False:
+if True:
     dataset = BCMDataset('data/mfcc_array2.npy')
     print(len(dataset))
     print(dataset[0])
