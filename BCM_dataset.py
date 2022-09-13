@@ -11,7 +11,7 @@ import torch.utils.data as data
 class BCMDataset(Dataset):
     """BCM dataset"""
 
-    def __init__(self, file_path, window_size = 3, stride = 1, MFCC_stride = 0.005, transform=None):
+    def __init__(self, file_path, window_size = 3, stride = 0.032, MFCC_stride = 0.032, transform=None):
         """
         Args:
         ----------
@@ -28,8 +28,9 @@ class BCMDataset(Dataset):
         self.file_path = file_path
         self.window_size = window_size
         self.stride = stride
-        self.MFCC_stride = MFCC_stride
-        
+        self.MFCC_stride = MFCC_stride        
+        self.mfccs_pr_window = int(window_size/MFCC_stride)
+        self.mfccs_pr_stride = int(stride/MFCC_stride)
 
         #Empty list to store the data
         self.data = np.load(file_path)
@@ -50,13 +51,17 @@ class BCMDataset(Dataset):
 
 
     def __len__(self):
-        return int(len(self.data))
+        return int((len(self.data) - self.mfccs_pr_window) / self.mfccs_pr_stride)
 
 
     def __getitem__(self, idx):
-        return torch.from_numpy(self.data[idx]).float().cpu(), torch.from_numpy(self.y[idx]).float().cpu()
+        position = idx * self.mfccs_pr_stride
+        x = self.data[position : position + self.mfccs_pr_window]
+        y = self.y[position : position + self.mfccs_pr_window]
+        pass
+        return torch.from_numpy(x).float().cpu(), torch.from_numpy(y).float().cpu()
     
-def concat_train_test_datasets(path): # Uses all files  in folder to concatenate test and train datasets
+def concat_train_test_datasets(path, window_size = 3, stride = 0.032, MFCC_stride = 0.032): # Uses all files  in folder to concatenate test and train datasets
     # os walk to get all files in folder
     training_set_list = []
     val_set_list = []
@@ -65,9 +70,9 @@ def concat_train_test_datasets(path): # Uses all files  in folder to concatenate
         for file in files:
             # Add every fourth file to validation set
             if file_count % 4 == 0:
-                val_set_list.append(BCMDataset(f'data/{file}'))
+                val_set_list.append(BCMDataset(f'data/{file}',window_size = 3, stride = 0.032, MFCC_stride = 0.032))
             else:
-                training_set_list.append(BCMDataset(f'data/{file}'))
+                training_set_list.append(BCMDataset(f'data/{file}',window_size = 3, stride = 0.032, MFCC_stride = 0.032))
             file_count += 1
         
     return data.ConcatDataset(training_set_list), data.ConcatDataset(val_set_list)
@@ -77,7 +82,7 @@ def concat_train_test_datasets(path): # Uses all files  in folder to concatenate
     
 
 # Print dataset version
-print("Dataset version:", 0.14)
+print("Dataset version:", 0.15)
 
 #Testing 
 if False:
