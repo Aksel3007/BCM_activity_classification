@@ -54,13 +54,11 @@ class LSTM_Model(LightningModule):
     def training_step(self, batch, batch_nb):
         x, y = batch
         loss = self.loss(self(x), y)
-        preds = self(x)        
-        
-        
-        self.accuracy(preds.argmax(1), y.argmax(1))
+        preds = self(x)
+        self.accuracy(torch.argmax(preds), torch.argmax(y))
         self.log('train_acc_step', self.accuracy)
         self.log("train_loss", loss)
-        return {'loss': loss, 'log': {'train_loss': loss}}
+        return {'train_loss': loss, 'log': {'train_loss': loss}}
     
     def val_dataloader(self):
         loader = DataLoader(self.val_set, batch_size=self.batch_size, shuffle=False)
@@ -86,33 +84,5 @@ class LSTM_Model(LightningModule):
     def training_epoch_end(self, outs):
         # log epoch metric
         self.log('train_acc_epoch', self.accuracy)
-        print(f'Accuracy: {self.accuracy.compute()}')
+        print(f'Accuracy: {self.accuracy}')
     
-    
-if False: #for testing. Debugging doesn't work with separate files in this case??
-    import torch
-    import torch.nn as nn
-    import torch.nn.functional as F
-    import torch.optim as optim
-    from pytorch_lightning import seed_everything, LightningModule, Trainer
-    from torch import save
-    from pytorch_lightning.callbacks import EarlyStopping
-
-    torch.manual_seed(1)
-    
-    seed_everything(42)
-    device = 'cuda' if torch.cuda.is_available() else 'cpu' #Check for cuda 
-    device = 'cpu'
-    print(f'Using {device} device')
-
-    early_stop_callback = EarlyStopping(monitor='val_loss', min_delta=0.00, patience=5, verbose=True, mode='min')
-
-    model = LSTM_Model().to(device)
-    trainer = Trainer(max_epochs=100, min_epochs=1, auto_lr_find=False, auto_scale_batch_size=False, callbacks=[early_stop_callback],enable_checkpointing=False)
-    trainer = Trainer(max_epochs=100, min_epochs=1, auto_lr_find=False, auto_scale_batch_size=False,enable_checkpointing=False)
-    trainer.tune(model)
-
-
-
-    trainer.fit(model)
-    save(model.state_dict(), '/trained_model')

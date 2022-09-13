@@ -6,7 +6,6 @@ from torch.utils.data import Dataset, DataLoader
 import numpy as np
 import h5py
 from sklearn.preprocessing import OneHotEncoder
-import torch.utils.data as data
 
 class BCMDataset(Dataset):
     """BCM dataset"""
@@ -56,34 +55,30 @@ class BCMDataset(Dataset):
     def __getitem__(self, idx):
         return torch.from_numpy(self.data[idx]).float().cpu(), torch.from_numpy(self.y[idx]).float().cpu()
     
-def concat_train_test_datasets(path): # Uses all files  in folder to concatenate test and train datasets
-    # os walk to get all files in folder
-    training_set_list = []
-    val_set_list = []
-    file_count = 0
-    for subdir, dirs, files in sorted(os.walk(path)):
-        for file in files:
+    def concat_train_test_datasets(path): # Uses all files in folder to concatenate test and train datasets
+        # os walk to get all files in folder
+        training_set_list = []
+        val_set_list = []
+        file_count = 0
+        for file in sorted(os.walk(path)):
             # Add every fourth file to validation set
             if file_count % 4 == 0:
-                val_set_list.append(BCMDataset(f'data/{file}'))
+                val_set_list.append(BCMDataset(file))
             else:
-                training_set_list.append(BCMDataset(f'data/{file}'))
+                training_set_list.append(BCMDataset(file))
             file_count += 1
-        
-    return data.ConcatDataset(training_set_list), data.ConcatDataset(val_set_list)
             
             
     
     
 
 # Print dataset version
-print("Dataset version:", 0.14)
+print("Dataset version:", 0.12)
 
 #Testing 
 if False:
-    dataset_train, dataset_val = concat_train_test_datasets('data')
-    print(len(dataset_train))
-    print(len(dataset_val))
+    dataset = BCMDataset('data/mfcc_array2.npy')
+    print(len(dataset))
     print(dataset[0])
 
     pass
