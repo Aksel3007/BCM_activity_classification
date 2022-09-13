@@ -11,8 +11,14 @@ from torchmetrics import Accuracy
 
 
 class LSTM_Model(LightningModule):
-    def __init__(self):
+    def __init__(self, file_path, window_size = 3, stride = 0.032, MFCC_stride = 0.032):
         super(LSTM_Model, self).__init__()
+        
+        self.file_path = file_path
+        self.window_size = window_size
+        self.stride = stride
+        self.MFCC_stride = MFCC_stride
+        self.mfccs_pr_window = int(window_size/MFCC_stride)
         
         # Network layers        
         self.lstm = nn.LSTM(input_size = 16,
@@ -20,48 +26,53 @@ class LSTM_Model(LightningModule):
                             num_layers = 1,
                             batch_first = True,
                             bidirectional = True)
-        self.fc = nn.Linear(128, 5)
+        self.fc = nn.Linear(128 * self.mfccs_pr_window, 5 * self.mfccs_pr_window)
+        self.flatten = nn.Flatten()
         self.output = nn.Sigmoid()
-        
         self.lr = 0.0001
-        self.batch_size = 128
+        self.batch_size = 64
         self.loss = nn.CrossEntropyLoss()
         self.accuracy = Accuracy()
         
         #Create the datasets
-        self.train_set, self.val_set = concat_train_test_datasets('data')
+        self.train_set, self.val_set = concat_train_test_datasets('data',window_size = window_size, stride = stride, MFCC_stride = MFCC_stride)
         
         
                 
     def forward(self, x):
-        lstm_out, (ht, ct) = self.lstm(x[:,None,:]) #Insert empty dimension for batch size
-        # Assert that there are only 2 layers
-        assert ht.shape[0] == 2, "ht.shape[0] != 2. To use more than 2 layers, change this code"
+        lstm_out, (ht, ct) = self.lstm(x) 
+        x = self.flatten(lstm_out) # This version of the flatten layer starts from dim 1, which avoids flattening the batch dimension
+        x = self.fc(x)
+        x = self.output(x)
+        #view as (batch_size, mfccs_pr_window, 5)
+        x = x.view(-1, self.mfccs_pr_window, 5)
         
-        ht = torch.hstack((ht[0],ht[1])) #Concatenate the two directions. todo: accommodate any number of layers
-         
-        x = self.fc(ht)
-        return self.output(x)
+        return x
     
     def configure_optimizers(self):
         return optim.Adam(self.parameters(), lr=self.lr)
     
     def train_dataloader(self):
         
-        loader = DataLoader(self.train_set, batch_size=self.batch_size, shuffle=False)
+        loader = DataLoader(self.train_set, batch_size=self.batch_size, shuffle=True)
         return loader
     
     def training_step(self, batch, batch_nb):
         x, y = batch
         loss = self.loss(self(x), y)
-        preds = self(x)
-        self.accuracy(torch.argmax(preds), torch.argmax(y))
+        preds = self(x)        
+        
+        # Use argmax to get the index of the highest value in the output vector along the 2. dimension (the 5 classes)
+        # Then use flatten to get a 1D tensor with every guess
+        self.accuracy(preds.argmax(2).flatten(), y.argmax(2).flatten()) 
+        
+        #Log the loss and accuracy
         self.log('train_acc_step', self.accuracy)
         self.log("train_loss", loss)
-        return {'train_loss': loss, 'log': {'train_loss': loss}}
+        return {'loss': loss, 'log': {'train_loss': loss}}
     
     def val_dataloader(self):
-        loader = DataLoader(self.val_set, batch_size=self.batch_size, shuffle=False)
+        loader = DataLoader(self.val_set, batch_size=self.batch_size, shuffle=True)
         return loader
     
     def validation_step(self, batch, batch_nb):
@@ -84,5 +95,33 @@ class LSTM_Model(LightningModule):
     def training_epoch_end(self, outs):
         # log epoch metric
         self.log('train_acc_epoch', self.accuracy)
-        print(f'Accuracy: {self.accuracy}')
+        print(f'Accuracy: {self.accuracy.compute()}')
     
+    
+if False: #for testing. Debugging doesn't work with separate files in this case??
+    import torch
+    import torch.nn as nn
+    import torch.nn.functional as F
+    import torch.optim as optim
+    from pytorch_lightning import seed_everything, LightningModule, Trainer
+    from torch import save
+    from pytorch_lightning.callbacks import EarlyStopping
+
+    torch.manual_seed(1)
+    
+    seed_everything(42)
+    device = 'cuda' if torch.cuda.is_available() else 'cpu' #Check for cuda 
+    device = 'cpu'
+    print(f'Using {device} device')
+
+    early_stop_callback = EarlyStopping(monitor='val_loss', min_delta=0.00, patience=5, verbose=True, mode='min')
+
+    model = LSTM_Model('data').to(device)
+    trainer = Trainer(max_epochs=100, min_epochs=1, auto_lr_find=False, auto_scale_batch_size=False, callbacks=[early_stop_callback],enable_checkpointing=False)
+    trainer = Trainer(max_epochs=100, min_epochs=1, auto_lr_find=False, auto_scale_batch_size=False,enable_checkpointing=False)
+    trainer.tune(model)
+
+
+
+    trainer.fit(model)
+    save(model.state_dict(), '/trained_model')

@@ -98,7 +98,7 @@ class LSTM_Model(LightningModule):
         print(f'Accuracy: {self.accuracy.compute()}')
     
     
-if True: #for testing. Debugging doesn't work with separate files in this case??
+if False: #for testing. Debugging doesn't work with separate files in this case??
     import torch
     import torch.nn as nn
     import torch.nn.functional as F
