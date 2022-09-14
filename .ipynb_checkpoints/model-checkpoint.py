@@ -29,7 +29,7 @@ class LSTM_Model(LightningModule):
         self.fc = nn.Linear(128 * self.mfccs_pr_window, 5 * self.mfccs_pr_window)
         self.flatten = nn.Flatten()
         self.output = nn.Sigmoid()
-        self.lr = 0.0001
+        self.lr = 0.001
         self.batch_size = 64
         self.loss = nn.CrossEntropyLoss()
         self.accuracy = Accuracy()
@@ -54,7 +54,7 @@ class LSTM_Model(LightningModule):
     
     def train_dataloader(self):
         
-        loader = DataLoader(self.train_set, batch_size=self.batch_size, shuffle=True)
+        loader = DataLoader(self.train_set, batch_size=self.batch_size, shuffle=True, num_workers = 8)
         return loader
     
     def training_step(self, batch, batch_nb):
@@ -72,7 +72,7 @@ class LSTM_Model(LightningModule):
         return {'loss': loss, 'log': {'train_loss': loss}}
     
     def val_dataloader(self):
-        loader = DataLoader(self.val_set, batch_size=self.batch_size, shuffle=True)
+        loader = DataLoader(self.val_set, batch_size=self.batch_size, shuffle=True, num_workers = 8)
         return loader
     
     def validation_step(self, batch, batch_nb):
