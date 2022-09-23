@@ -13,7 +13,7 @@ from sklearn import datasets
 class SpeakerDataset(Dataset):
     """BCM dataset"""
 
-    def __init__(self, file_path, class_id, window_size = 3, stride = 3, MFCC_stride = 0.032, transform=None):
+    def __init__(self, file_path, class_id, window_size = 3, stride = 0.032, MFCC_stride = 0.032, transform=None):
         """
         Args:
         ----------
@@ -62,7 +62,7 @@ def concat_train_test_datasets(path, window_size = 3, stride = 0.032, MFCC_strid
     for subdir, dirs, files in sorted(os.walk(path)):
         for i, file in enumerate(files):
             
-            dataset_list.append(SpeakerDataset(f'{path}/{file}',class_id = i, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride))
+            dataset_list.append(SpeakerDataset(f'{path}/{file}',class_id = i, window_size = 3, stride = 0.032, MFCC_stride = 0.032))
     
     speaker_set_full = data.ConcatDataset(dataset_list)
     
