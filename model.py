@@ -26,12 +26,12 @@ class LSTM_Model(LightningModule):
                             num_layers = 1,
                             batch_first = True,
                             bidirectional = True)
-        self.fc = nn.Linear(128 * self.mfccs_pr_window, 5 * self.mfccs_pr_window)
+        self.fc = nn.Linear(128 , 5)
         self.flatten = nn.Flatten()
         self.output = nn.Sigmoid()
-        self.sm = nn.Softmax(dim=2)
+        self.sm = nn.Softmax(dim=1) # Dim 1 when using 1 output pr window
         self.lr = 0.001
-        self.batch_size = 64
+        self.batch_size = 32
         self.loss = nn.CrossEntropyLoss()
         self.accuracy = Accuracy()
         self.val_accuracy = Accuracy()
@@ -43,13 +43,14 @@ class LSTM_Model(LightningModule):
                 
     def forward(self, x):
         lstm_out, (ht, ct) = self.lstm(x) 
-        x = self.flatten(lstm_out) # This version of the flatten layer starts from dim 1, which avoids flattening the batch dimension
+        ht = ht.type_as(x)
+        # Flatten the final hidden states from the LSTM layers. The axes are moved using moveaxis, to the the batch dimension first
+        x = self.flatten(torch.moveaxis(ht,0,1)) # This version of the flatten layer starts from dim 1, which avoids flattening the batch dimension
         x = self.fc(x)
         x = self.output(x)
         #view as (batch_size, mfccs_pr_window, 5)
-        x = x.view(-1, self.mfccs_pr_window, 5)
-        x = self.sm(x)
-        
+        #x = x.view(-1, self.mfccs_pr_window, 5) # No longer needed
+        x = self.sm(x) # Softmax to get probabilities
         return x
     
     def configure_optimizers(self):
@@ -63,12 +64,12 @@ class LSTM_Model(LightningModule):
     def training_step(self, batch, batch_nb):
         x, y = batch
         preds = self(x)
-        loss = self.loss(preds.flatten(end_dim = 1), y.flatten(end_dim = 1)) # Flatten to collect batch dimension and mfccs_pr_window dimension
+        loss = self.loss(preds, y) # Flatten to collect batch dimension and mfccs_pr_window dimension
                 
         
         # Use argmax to get the index of the highest value in the output vector along the 2. dimension (the 5 classes)
         # Then use flatten to get a 1D tensor with every guess
-        self.accuracy(preds.argmax(2).flatten(), y.argmax(2).flatten()) 
+        self.accuracy(preds.argmax(1), y.argmax(1)) # Argmax finds the index of the highest value in the output vector along the 2. dimension (dim 1) (the 5 classes)
         
         #Log the loss and accuracy
         self.log('train_acc_step', self.accuracy)
@@ -76,19 +77,19 @@ class LSTM_Model(LightningModule):
         return {'loss': loss, 'log': {'train_loss': loss}}
     
     def val_dataloader(self):
-        loader = DataLoader(self.val_set, batch_size=self.batch_size, shuffle=True, num_workers = 8)
+        loader = DataLoader(self.val_set, batch_size=self.batch_size, shuffle=False, num_workers = 8)
         return loader
     
     def validation_step(self, batch, batch_nb):
         x, y = batch
-        loss = self.loss(self(x).flatten(end_dim = 1), y.flatten(end_dim = 1))
+        loss = self.loss(self(x), y)
         self.log("val_loss",loss)
         
         preds = self(x)                
         
         # Use argmax to get the index of the highest value in the output vector along the 2. dimension (the 5 classes)
         # Then use flatten to get a 1D tensor with every guess
-        self.val_accuracy(preds.argmax(2).flatten(), y.argmax(2).flatten()) 
+        self.val_accuracy(preds.argmax(1), y.argmax(1)) 
         
         #Log the loss and accuracy
         self.log('val_acc_step', self.val_accuracy)
@@ -118,6 +119,7 @@ class LSTM_Model(LightningModule):
     
     
 if False: #for testing. Debugging doesn't work with separate files in this case??
+
     import torch
     import torch.nn as nn
     import torch.nn.functional as F
@@ -129,13 +131,14 @@ if False: #for testing. Debugging doesn't work with separate files in this case?
     torch.manual_seed(1)
     
     seed_everything(42)
+    seed_everything(42)
     device = 'cuda' if torch.cuda.is_available() else 'cpu' #Check for cuda 
     #device = 'cpu'
     print(f'Using {device} device')
 
     early_stop_callback = EarlyStopping(monitor='val_loss', min_delta=0.00, patience=5, verbose=True, mode='min')
 
-    model = LSTM_Model('data/speaker_rec/',stride = 3).to(device)
+    model = LSTM_Model('data/bcm/').to(device)
     #trainer = Trainer(max_epochs=100, min_epochs=1, auto_lr_find=False, auto_scale_batch_size=False, callbacks=[early_stop_callback],enable_checkpointing=False)
     trainer = Trainer(max_epochs=3, min_epochs=1, auto_lr_find=False, auto_scale_batch_size=False,enable_checkpointing=False)
     trainer.tune(model)

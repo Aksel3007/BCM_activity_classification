@@ -53,7 +53,7 @@ class bcmDataset(Dataset):
         x = self.data[position : position + self.mfccs_pr_window]
         y = self.y[position : position + self.mfccs_pr_window]
 
-        return torch.from_numpy(x).float().cpu(), torch.from_numpy(y).float().cpu()
+        return torch.from_numpy(x).float(), torch.from_numpy(y[0]).float()
     
 def concat_train_test_datasets(path, window_size = 3, stride = 0.032, MFCC_stride = 0.032): # Uses all files  in folder to concatenate test and train datasets
     # os walk to get all files in folder
