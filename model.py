@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch import nn, optim
 from pytorch_lightning import seed_everything, LightningModule, Trainer
-from speaker_dataset import SpeakerDataset, concat_train_test_datasets
+from BCM_dataset_v2 import bcmDataset, concat_train_test_datasets
 from torch.utils.data import DataLoader
 
 from torchmetrics import Accuracy

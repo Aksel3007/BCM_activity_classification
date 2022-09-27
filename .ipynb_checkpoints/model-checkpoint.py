@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch import nn, optim
 from pytorch_lightning import seed_everything, LightningModule, Trainer
-from speaker_dataset import SpeakerDataset, concat_train_test_datasets
+from BCM_dataset_v2 import bcmDataset, concat_train_test_datasets
 from torch.utils.data import DataLoader
 
 from torchmetrics import Accuracy
@@ -37,7 +37,7 @@ class LSTM_Model(LightningModule):
         self.val_accuracy = Accuracy()
         
         #Create the datasets
-        self.train_set, self.val_set = concat_train_test_datasets(file_path, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride)
+        self.train_set, self.val_set = concat_train_test_datasets(file_path, window_size = window_size, stride = self.stride, MFCC_stride = MFCC_stride)
         
         
                 
@@ -130,17 +130,15 @@ if False: #for testing. Debugging doesn't work with separate files in this case?
     
     seed_everything(42)
     device = 'cuda' if torch.cuda.is_available() else 'cpu' #Check for cuda 
-    device = 'cpu'
+    #device = 'cpu'
     print(f'Using {device} device')
 
     early_stop_callback = EarlyStopping(monitor='val_loss', min_delta=0.00, patience=5, verbose=True, mode='min')
 
-    model = LSTM_Model('data').to(device)
+    model = LSTM_Model('data/speaker_rec/',stride = 3).to(device)
     #trainer = Trainer(max_epochs=100, min_epochs=1, auto_lr_find=False, auto_scale_batch_size=False, callbacks=[early_stop_callback],enable_checkpointing=False)
-    trainer = Trainer(max_epochs=100, min_epochs=1, auto_lr_find=False, auto_scale_batch_size=False,enable_checkpointing=False)
+    trainer = Trainer(max_epochs=3, min_epochs=1, auto_lr_find=False, auto_scale_batch_size=False,enable_checkpointing=False)
     trainer.tune(model)
 
-
-
     trainer.fit(model)
-    save(model.state_dict(), '/trained_model')
+    #save(model.state_dict(), '/trained_model')
