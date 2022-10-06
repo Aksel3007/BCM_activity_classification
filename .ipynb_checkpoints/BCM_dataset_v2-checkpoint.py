@@ -53,24 +53,27 @@ class bcmDataset(Dataset):
         x = self.data[position : position + self.mfccs_pr_window]
         y = self.y[position : position + self.mfccs_pr_window]
 
-        return torch.from_numpy(x).float().cpu(), torch.from_numpy(y).float().cpu()
+        return torch.from_numpy(x).float(), torch.from_numpy(y[0]).float()
     
 def concat_train_test_datasets(path, window_size = 3, stride = 0.032, MFCC_stride = 0.032): # Uses all files  in folder to concatenate test and train datasets
     # os walk to get all files in folder
-    dataset_list = []
-    file_count = 0
-    for subdir, dirs, files in sorted(os.walk(path)):
-        for i, file in enumerate(files):
-            
-            dataset_list.append(bcmDataset(f'{path}/{file}',class_id = i, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride))
-            print(f'{path}/{file}')
+    training_set_list = []
+    val_set_list = []
     
-    speaker_set_full = data.ConcatDataset(dataset_list)
+    print('Validation set')
+    for subdir, dirs, files in sorted(os.walk(f'{path}/validation')):
+        for i, file in enumerate(sorted(files)):
+            val_set_list.append(bcmDataset(f'{path}/validation/{file}',class_id = i, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride))
+            print(f'{path}/validation/{file}')
     
-    # Make a train and test dataset
-    train_data, test_data = random_split(speaker_set_full, [int(len(speaker_set_full)*0.80),int(len(speaker_set_full)*0.20)])
-            
-    return train_data, test_data
+    print('Training set')
+    for subdir, dirs, files in sorted(os.walk(f'{path}/train')):
+        for i, file in enumerate(sorted(files)):
+            training_set_list.append(bcmDataset(f'{path}/train/{file}',class_id = i, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride))
+            print(f'{path}/train/{file}')
+    
+    
+    return data.ConcatDataset(training_set_list), data.ConcatDataset(val_set_list)
             
             
     
