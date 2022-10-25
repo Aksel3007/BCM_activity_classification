@@ -1,0 +1,52 @@
+{"obj": {"type": "AssignString", "path": ["sys", "name"], "value": "Untitled"}, "version": 1}
+{"obj": {"type": "AssignString", "path": ["sys", "description"], "value": ""}, "version": 2}
+{"obj": {"type": "AssignString", "path": ["sys", "hostname"], "value": "node7"}, "version": 3}
+{"obj": {"type": "AssignBool", "path": ["sys", "failed"], "value": false}, "version": 4}
+{"obj": {"type": "ClearStringLog", "path": ["monitoring", "stdout"]}, "version": 5}
+{"obj": {"type": "ClearStringLog", "path": ["monitoring", "stderr"]}, "version": 6}
+{"obj": {"type": "UploadFileSet", "path": ["source_code", "files"], "file_globs": ["/home/aron/BCM_activity_classification/train_model.ipynb", "/home/aron/BCM_activity_classification/model.py", "/home/aron/BCM_activity_classification/BCM_dataset_v2.py"], "reset": "False"}, "version": 7}
+{"obj": {"type": "ConfigFloatSeries", "path": ["monitoring", "cpu"], "min": 0.0, "max": 100.0, "unit": "%"}, "version": 8}
+{"obj": {"type": "ClearFloatLog", "path": ["monitoring", "cpu"]}, "version": 9}
+{"obj": {"type": "ConfigFloatSeries", "path": ["monitoring", "memory"], "min": 0.0, "max": 62.71272277832031, "unit": "GB"}, "version": 10}
+{"obj": {"type": "ClearFloatLog", "path": ["monitoring", "memory"]}, "version": 11}
+{"obj": {"type": "ConfigFloatSeries", "path": ["monitoring", "gpu_0"], "min": 0.0, "max": 100.0, "unit": "%"}, "version": 12}
+{"obj": {"type": "ClearFloatLog", "path": ["monitoring", "gpu_0"]}, "version": 13}
+{"obj": {"type": "ConfigFloatSeries", "path": ["monitoring", "gpu_1"], "min": 0.0, "max": 100.0, "unit": "%"}, "version": 14}
+{"obj": {"type": "ClearFloatLog", "path": ["monitoring", "gpu_1"]}, "version": 15}
+{"obj": {"type": "ConfigFloatSeries", "path": ["monitoring", "gpu_memory_0"], "min": 0.0, "max": 12.0, "unit": "GB"}, "version": 16}
+{"obj": {"type": "ClearFloatLog", "path": ["monitoring", "gpu_memory_0"]}, "version": 17}
+{"obj": {"type": "ConfigFloatSeries", "path": ["monitoring", "gpu_memory_1"], "min": 0.0, "max": 12.0, "unit": "GB"}, "version": 18}
+{"obj": {"type": "ClearFloatLog", "path": ["monitoring", "gpu_memory_1"]}, "version": 19}
+{"obj": {"type": "LogStrings", "path": ["monitoring", "stdout"], "values": [{"value": "", "step": null, "ts": 1665614990.69624}]}, "version": 20}
+{"obj": {"type": "LogFloats", "path": ["monitoring", "cpu"], "values": [{"value": 10.6, "step": null, "ts": 1665614990.694265}]}, "version": 21}
+{"obj": {"type": "LogStrings", "path": ["monitoring", "stdout"], "values": [{"value": "Remember to stop your run once you\u2019ve finished logging your metadata (https://docs.neptune.ai/api-reference/run#.stop). It will be stopped automatically only when the notebook kernel/interactive console is terminated.\n", "step": null, "ts": 1665614990.7015047}]}, "version": 22}
+{"obj": {"type": "LogFloats", "path": ["monitoring", "memory"], "values": [{"value": 7.924701690673828, "step": null, "ts": 1665614990.694265}]}, "version": 23}
+{"obj": {"type": "LogFloats", "path": ["monitoring", "gpu_memory_0"], "values": [{"value": 2.22760009765625, "step": null, "ts": 1665614990.694265}]}, "version": 24}
+{"obj": {"type": "LogFloats", "path": ["monitoring", "gpu_memory_1"], "values": [{"value": 0.234130859375, "step": null, "ts": 1665614990.694265}]}, "version": 25}
+{"obj": {"type": "AssignString", "path": ["source_code", "integrations", "pytorch-lightning"], "value": "1.7.5"}, "version": 26}
+{"obj": {"type": "LogStrings", "path": ["metadata", "file_path"], "values": [{"value": "data/bcm/", "step": null, "ts": 1665614991.3278034}]}, "version": 27}
+{"obj": {"type": "LogFloats", "path": ["metadata", "window_size"], "values": [{"value": 3.0, "step": null, "ts": 1665614991.3299673}]}, "version": 28}
+{"obj": {"type": "LogFloats", "path": ["metadata", "stride"], "values": [{"value": 0.032, "step": null, "ts": 1665614991.331914}]}, "version": 29}
+{"obj": {"type": "LogFloats", "path": ["metadata", "MFCC_stride"], "values": [{"value": 0.032, "step": null, "ts": 1665614991.3339171}]}, "version": 30}
+{"obj": {"type": "LogFloats", "path": ["metadata", "mfccs_pr_window"], "values": [{"value": 93.0, "step": null, "ts": 1665614991.3358812}]}, "version": 31}
+{"obj": {"type": "LogFloats", "path": ["metadata", "lr"], "values": [{"value": 0.001, "step": null, "ts": 1665614991.337743}]}, "version": 32}
+{"obj": {"type": "LogFloats", "path": ["metadata", "batch_size"], "values": [{"value": 32.0, "step": null, "ts": 1665614991.3395782}]}, "version": 33}
+{"obj": {"type": "LogFloats", "path": ["metadata", "lstm_layers"], "values": [{"value": 2.0, "step": null, "ts": 1665614991.341466}]}, "version": 34}
+{"obj": {"type": "LogFloats", "path": ["metadata", "lstm_hidden_size"], "values": [{"value": 64.0, "step": null, "ts": 1665614991.3432593}]}, "version": 35}
+{"obj": {"type": "LogFloats", "path": ["metadata", "train_set_length"], "values": [{"value": 168285.0, "step": null, "ts": 1665614991.3449728}]}, "version": 36}
+{"obj": {"type": "LogFloats", "path": ["metadata", "val_set_length"], "values": [{"value": 55785.0, "step": null, "ts": 1665614991.3468006}]}, "version": 37}
+{"obj": {"type": "LogStrings", "path": ["monitoring", "stderr"], "values": [{"value": "/home/aron/.local/lib/python3.9/site-packages/pytorch_lightning/core/module.py:555: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).\n  value = torch.tensor(value, device=self.device)\n", "step": null, "ts": 1665614991.7155387}]}, "version": 38}
+{"obj": {"type": "LogStrings", "path": ["monitoring", "stdout"], "values": [{"value": "{'progress_bar': {'val_loss': 1.6004910469055176}, 'log': {'val_loss': 1.6004910469055176}, 'val_loss': 1.6004910469055176}", "step": null, "ts": 1665614991.7931921}]}, "version": 39}
+{"obj": {"type": "LogStrings", "path": ["monitoring", "stdout"], "values": [{"value": "\n", "step": null, "ts": 1665614991.7952435}]}, "version": 40}
+{"obj": {"type": "LogStrings", "path": ["monitoring", "stdout"], "values": [{"value": "Accuracy: 0.75", "step": null, "ts": 1665614991.797862}]}, "version": 41}
+{"obj": {"type": "LogStrings", "path": ["monitoring", "stdout"], "values": [{"value": "\n", "step": null, "ts": 1665614991.7998586}]}, "version": 42}
+{"obj": {"type": "LogStrings", "path": ["monitoring", "stderr"], "values": [{"value": "/home/aron/.local/lib/python3.9/site-packages/pytorch_lightning/trainer/trainer.py:653: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...\n  rank_zero_warn(\"Detected KeyboardInterrupt, attempting graceful shutdown...\")\n", "step": null, "ts": 1665614996.3355217}]}, "version": 43}
+{"obj": {"type": "LogFloats", "path": ["monitoring", "cpu"], "values": [{"value": 34.6, "step": null, "ts": 1665615000.711053}]}, "version": 44}
+{"obj": {"type": "LogFloats", "path": ["monitoring", "memory"], "values": [{"value": 8.484996795654297, "step": null, "ts": 1665615000.711053}]}, "version": 45}
+{"obj": {"type": "LogFloats", "path": ["monitoring", "gpu_memory_0"], "values": [{"value": 2.22564697265625, "step": null, "ts": 1665615000.711053}]}, "version": 46}
+{"obj": {"type": "LogFloats", "path": ["monitoring", "gpu_memory_1"], "values": [{"value": 0.234130859375, "step": null, "ts": 1665615000.711053}]}, "version": 47}
+{"obj": {"type": "LogFloats", "path": ["monitoring", "cpu"], "values": [{"value": 10.9, "step": null, "ts": 1665615010.7252743}]}, "version": 48}
+{"obj": {"type": "LogFloats", "path": ["monitoring", "memory"], "values": [{"value": 8.493797302246094, "step": null, "ts": 1665615010.7252743}]}, "version": 49}
+{"obj": {"type": "LogFloats", "path": ["monitoring", "gpu_memory_0"], "values": [{"value": 2.22564697265625, "step": null, "ts": 1665615010.7252743}]}, "version": 50}
+{"obj": {"type": "LogFloats", "path": ["monitoring", "gpu_memory_1"], "values": [{"value": 0.234130859375, "step": null, "ts": 1665615010.7252743}]}, "version": 51}
+{"obj": {"type": "LogStrings", "path": ["monitoring", "stdout"], "values": [{"value": "Shutting down background jobs, please wait a moment...\n", "step": null, "ts": 1665615013.7243352}]}, "version": 52}

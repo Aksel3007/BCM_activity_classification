@@ -13,7 +13,7 @@ from sklearn import datasets
 class bcmDataset(Dataset):
     """BCM dataset"""
 
-    def __init__(self, file_path, class_id, window_size = 3, stride = 3, MFCC_stride = 0.032, transform=None):
+    def __init__(self, file_path, class_id, window_size = 3, stride = 3, MFCC_stride = 0.032, transform=None, occlusion = 0):
         """
         Args:
         ----------
@@ -35,9 +35,20 @@ class bcmDataset(Dataset):
         self.MFCC_stride = MFCC_stride        
         self.mfccs_pr_window = int(window_size/MFCC_stride)
         self.mfccs_pr_stride = int(stride/MFCC_stride)
+        self.occlusion = occlusion
+        
+        # Check if file_path contains the word spectrogram
+        if 'spectrogram' in file_path:
+            self.spectrogram = True
 
         #Empty list to store the data
         self.data = np.load(file_path)
+        
+        # Occlusion
+        if occlusion:
+            for i in range(len(occlusion)):
+                if occlusion[i]:
+                    self.data[:,i] = 0
 
         y = np.zeros((len(self.data),5))
         y[:,class_id] = 1
@@ -52,10 +63,12 @@ class bcmDataset(Dataset):
         position = idx * self.mfccs_pr_stride
         x = self.data[position : position + self.mfccs_pr_window]
         y = self.y[position : position + self.mfccs_pr_window]
-
+        if self.spectrogram: # If the data is a spectrogram, we normalize it
+            x = (x - np.mean(x)) / np.std(x)
         return torch.from_numpy(x).float(), torch.from_numpy(y[0]).float()
+
     
-def concat_train_test_datasets(path, window_size = 3, stride = 0.032, MFCC_stride = 0.032): # Uses all files  in folder to concatenate test and train datasets
+def concat_train_test_datasets(path, window_size = 3, stride = 0.032, MFCC_stride = 0.032, occlusion = 0): # Uses all files  in folder to concatenate test and train datasets
     # os walk to get all files in folder
     training_set_list = []
     val_set_list = []
@@ -63,13 +76,13 @@ def concat_train_test_datasets(path, window_size = 3, stride = 0.032, MFCC_strid
     print('Validation set')
     for subdir, dirs, files in sorted(os.walk(f'{path}/validation')):
         for i, file in enumerate(sorted(files)):
-            val_set_list.append(bcmDataset(f'{path}/validation/{file}',class_id = i, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride))
+            val_set_list.append(bcmDataset(f'{path}/validation/{file}',class_id = i, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride, occlusion = occlusion))
             print(f'{path}/validation/{file}')
     
     print('Training set')
     for subdir, dirs, files in sorted(os.walk(f'{path}/train')):
         for i, file in enumerate(sorted(files)):
-            training_set_list.append(bcmDataset(f'{path}/train/{file}',class_id = i, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride))
+            training_set_list.append(bcmDataset(f'{path}/train/{file}',class_id = i, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride, occlusion = occlusion))
             print(f'{path}/train/{file}')
     
     
@@ -80,13 +93,13 @@ def concat_train_test_datasets(path, window_size = 3, stride = 0.032, MFCC_strid
     
 
 # Print dataset version
-print("Dataset version:", 2.0)
+print("Dataset version:", 2.1)
 
 #Testing 
 if False:
-    dataset_train, dataset_val = concat_train_test_datasets('data/bcm')
+    dataset_train, dataset_val = concat_train_test_datasets('data/bcm_spectrograms')
     print(len(dataset_train))
     print(len(dataset_val))
-    print(dataset_train[0])
+    print(dataset_train[5])
 
     pass
