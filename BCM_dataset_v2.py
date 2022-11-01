@@ -40,6 +40,8 @@ class bcmDataset(Dataset):
         # Check if file_path contains the word spectrogram
         if 'spectrogram' in file_path:
             self.spectrogram = True
+        else:
+            self.spectrogram = False
 
         #Empty list to store the data
         self.data = np.load(file_path)
