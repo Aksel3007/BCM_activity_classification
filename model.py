@@ -20,7 +20,8 @@ class LSTM_Model(LightningModule):
                  batch_size = 32, 
                  lr = 0.001,
                  weight_decay = 0,
-                 occlusion = 0):
+                 occlusion = 0,
+                 seed = 0):
         
         super(LSTM_Model, self).__init__()
         
@@ -33,6 +34,7 @@ class LSTM_Model(LightningModule):
         self.lr = lr
         self.batch_size = batch_size
         self.occlusion = occlusion
+        self.seed = seed
         
         self.mfccs_pr_window = int(window_size/MFCC_stride)
         
@@ -79,6 +81,7 @@ class LSTM_Model(LightningModule):
         self.logger.experiment["metadata/lstm_hidden_size"].log(self.hidden_size)
         self.logger.experiment["metadata/weight_decay"].log(self.weight_decay)
         self.logger.experiment["metadata/occlusion"].log(self.occlusion)
+        self.logger.experiment["metadata/seed"].log(self.seed)
         
         self.logger.experiment["metadata/train_set_length"].log(len(self.train_set))
         self.logger.experiment["metadata/val_set_length"].log(len(self.val_set))
