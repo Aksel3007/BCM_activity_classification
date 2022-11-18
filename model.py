@@ -141,7 +141,6 @@ class LSTM_Model(LightningModule):
         
         self.log('val_acc_epoch', self.val_accuracy)
         print(f'Accuracy: {self.val_accuracy.compute()}')
-        
         return results
     
     def training_epoch_end(self, outs):

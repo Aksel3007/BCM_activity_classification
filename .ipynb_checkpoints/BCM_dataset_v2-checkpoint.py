@@ -74,32 +74,54 @@ def concat_train_test_datasets(path, window_size = 3, stride = 0.032, MFCC_strid
     # os walk to get all files in folder
     training_set_list = []
     val_set_list = []
+    print('_____________________')
+    print(type(path))
+    print('_____________________')
+    if type(path) == str:
+        print('Validation set')
+        for subdir, dirs, files in sorted(os.walk(f'{path}/validation')):
+            for i, file in enumerate(sorted(files)):
+                val_set_list.append(bcmDataset(f'{path}/validation/{file}',class_id = i, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride, occlusion = occlusion))
+                print(f'{path}/validation/{file}')
+        
+        print('Training set')
+        for subdir, dirs, files in sorted(os.walk(f'{path}/train')):
+            for i, file in enumerate(sorted(files)):
+                training_set_list.append(bcmDataset(f'{path}/train/{file}',class_id = i, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride, occlusion = occlusion))
+                print(f'{path}/train/{file}')
     
-    print('Validation set')
-    for subdir, dirs, files in sorted(os.walk(f'{path}/validation')):
-        for i, file in enumerate(sorted(files)):
-            val_set_list.append(bcmDataset(f'{path}/validation/{file}',class_id = i, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride, occlusion = occlusion))
-            print(f'{path}/validation/{file}')
-    
-    print('Training set')
-    for subdir, dirs, files in sorted(os.walk(f'{path}/train')):
-        for i, file in enumerate(sorted(files)):
-            training_set_list.append(bcmDataset(f'{path}/train/{file}',class_id = i, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride, occlusion = occlusion))
-            print(f'{path}/train/{file}')
-    
+    else:
+        print('Validation set')
+        for paradigm_file in path[1]:
+            for subdir, dirs, files in sorted(os.walk(f'{paradigm_file}')):
+                for i, file in enumerate(sorted(files)):
+                    class_id = int(file.split('.')[0][-1])
+                    val_set_list.append(bcmDataset(f'{paradigm_file}/{file}',class_id = class_id, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride, occlusion = occlusion))
+                    print(f'{paradigm_file}/{file}')
+        
+        print('Training set')
+        for paradigm_file in path[0]:
+            for subdir, dirs, files in sorted(os.walk(f'{paradigm_file}')):
+                for i, file in enumerate(sorted(files)):
+                    class_id = int(file.split('.')[0][-1])
+                    training_set_list.append(bcmDataset(f'{paradigm_file}/{file}',class_id = class_id, window_size = window_size, stride = stride, MFCC_stride = MFCC_stride, occlusion = occlusion))
+                    print(f'{paradigm_file}/{file}')
+        
     
     return data.ConcatDataset(training_set_list), data.ConcatDataset(val_set_list)
-            
+
             
     
     
 
 # Print dataset version
-print("Dataset version:", 2.1)
+print("Dataset version:", 3)
 
 #Testing 
 if False:
-    dataset_train, dataset_val = concat_train_test_datasets('data/bcm_spectrograms')
+    ds_list = [['bcm_behaviour_data_multi_subject/subject1/2022-09-20_14-58-39','bcm_behaviour_data_multi_subject/subject1/2022-09-20_15-18-27'],['bcm_behaviour_data_multi_subject/subject1/2022-09-20_15-38-11']]
+    
+    dataset_train, dataset_val = concat_train_test_datasets(ds_list)
     print(len(dataset_train))
     print(len(dataset_val))
     print(dataset_train[5])
