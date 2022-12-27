@@ -21,7 +21,8 @@ class LSTM_Model(LightningModule):
                  lr = 0.001,
                  weight_decay = 0,
                  occlusion = 0,
-                 seed = 0):
+                 seed = 0, 
+                 temporal_cutout = False):
         
         super(LSTM_Model, self).__init__()
         
@@ -35,6 +36,7 @@ class LSTM_Model(LightningModule):
         self.batch_size = batch_size
         self.occlusion = occlusion
         self.seed = seed
+        self.temporal_cutout = temporal_cutout
         
         self.mfccs_pr_window = int(window_size/MFCC_stride)
         
@@ -55,7 +57,7 @@ class LSTM_Model(LightningModule):
         self.val_accuracy = Accuracy()
         
         #Create the datasets
-        self.train_set, self.val_set = concat_train_test_datasets(self.file_path, window_size = self.window_size, stride = self.stride, MFCC_stride = self.MFCC_stride, occlusion = self.occlusion)
+        self.train_set, self.val_set = concat_train_test_datasets(self.file_path, window_size = self.window_size, stride = self.stride, MFCC_stride = self.MFCC_stride, occlusion = self.occlusion, temporal_cutout = self.temporal_cutout)
         self.weight_decay = weight_decay
         
                 
