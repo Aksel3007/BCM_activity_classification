@@ -1,0 +1,14 @@
+Id,Creation Time,training/val_acc_epoch (max),Tags,Val acc (last),Window (s) (last),hidden_size (last),Monitoring Time,metadata/occlusion (average),Epoch (last),metadata/lstm_layers (last),metadata/stride (average),metadata/seed (average),metadata/file_path,metadata/val_set_length (average),metadata/train_set_length (last),training/val_acc_epoch (variance)
+BCMAC-566,15-11-22 0:43,0.940018594,"[""fine-tuning""]",0.933333337,3,128,231,0,79,1,1,100,['bcm_behaviour_data_multi_subject/subject1/2022-09-20_15-38-11'],5385,14360,0.005001868
+BCMAC-569,15-11-22 0:55,0.918662965,"[""fine-tuning""]",0.911234915,3,128,234,0,79,1,1,100,['bcm_behaviour_data_multi_subject/subject1/2022-09-20_14-58-39'],5385,14360,0.00358448
+BCMAC-572,15-11-22 1:07,0.936861634,"[""fine-tuning""]",0.935561717,3,128,238,0,79,1,1,100,['bcm_behaviour_data_multi_subject/subject1/2022-09-20_15-18-27'],5385,14360,0.00495871
+BCMAC-575,15-11-22 1:19,0.948189437,"[""fine-tuning""]",0.934633255,3,128,238,0,79,1,1,100,['bcm_behaviour_data_multi_subject/subject1/2022-09-20_15-57-37'],5385,14360,0.005296327
+BCMAC-576,15-11-22 1:23,0.870937765,"[""fine-tuning""]",0.868523657,3,128,240,0,79,1,1,100,['bcm_behaviour_data_multi_subject/subject2/2022-11-09_13-56-0'],5385,14360,0.006678809
+BCMAC-573,15-11-22 1:11,0.883008361,"[""fine-tuning""]",0.870566368,3,128,241,0,79,1,1,100,['bcm_behaviour_data_multi_subject/subject2/2022-11-09_14-15-6'],5385,14360,0.007440657
+BCMAC-570,15-11-22 0:59,0.899350047,"[""fine-tuning""]",0.894521832,3,128,235,0,79,1,1,100,['bcm_behaviour_data_multi_subject/subject2/2022-11-09_14-52-7'],5385,14360,0.00879943
+BCMAC-567,15-11-22 0:47,0.896750212,"[""fine-tuning""]",0.890065014,3,128,234,0,79,1,1,100,['bcm_behaviour_data_multi_subject/subject2/2022-11-09_14-34-16'],5385,14360,0.007747387
+BCMAC-568,15-11-22 0:51,0.943546891,"[""fine-tuning""]",0.93203342,3,128,237,0,79,1,1,100,['bcm_behaviour_data_multi_subject/subject3/2022-11-09_15-47-1'],5385,14360,0.007735464
+BCMAC-571,15-11-22 1:03,0.961931288,"[""fine-tuning""]",0.958774388,3,128,237,0,79,1,1,100,['bcm_behaviour_data_multi_subject/subject3/2022-11-09_16-26-13'],5385,14360,0.008132465
+BCMAC-574,15-11-22 1:15,0.95004642,"[""fine-tuning""]",0.948746502,3,128,238,0,79,1,1,100,['bcm_behaviour_data_multi_subject/subject3/2022-11-09_15-27-14'],5385,14360,0.008259246
+BCMAC-577,15-11-22 1:27,0.958217263,"[""fine-tuning""]",0.942804098,3,128,239,0,79,1,1,100,['bcm_behaviour_data_multi_subject/subject3/2022-11-09_16-7-9'],5385,14360,0.0072702
+
